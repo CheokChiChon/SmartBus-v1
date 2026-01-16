@@ -68,6 +68,7 @@ let routes = {
 };
 
 let map;
+let bounds;
 let pickupMarker = null;
 let dropoffMarker = null;
 
@@ -75,20 +76,53 @@ let dropoffMarker = null;
    Google Map 初始化
 ======================== */
 function initMap() {
-  const nathanRoad = { lat: 22.3049, lng: 114.1717 };
-
   map = new google.maps.Map(document.getElementById("map"), {
-    zoom: 15,
-    center: nathanRoad,
+    zoom: 15, // 之後會被 fitBounds 覆蓋
+    center: { lat: 22.3048, lng: 114.1717 }
   });
 
-  // 上車點
-  createMarker({ lat: 22.3049, lng: 114.1717 }, "pickup", "佐敦");
-  createMarker({ lat: 22.3025, lng: 114.1722 }, "pickup", "柯士甸");
+  bounds = new google.maps.LatLngBounds();
 
-  // 落車點
-  createMarker({ lat: 22.2998, lng: 114.1728 }, "dropoff", "尖沙咀");
-  createMarker({ lat: 22.2965, lng: 114.1729 }, "dropoff", "K11");
+  /* ===== 上車點 Pickup ===== */
+  createMarker(
+    { lat: 22.304800, lng: 114.171699 },
+    "pickup",
+    "佐敦 MTR"
+  );
+
+  createMarker(
+    { lat: 22.301734218400927, lng: 114.17200865012487 },
+    "pickup",
+    "聖安德烈堂"
+  );
+
+  createMarker(
+    { lat: 22.306393051578773, lng: 114.17142374190861 },
+    "pickup",
+    "南京街 × 彌敦道"
+  );
+
+  createMarker(
+    { lat: 22.307430657315873, lng: 114.17154245615282 },
+    "pickup",
+    "彌敦酒店"
+  );
+
+  /* ===== 落車點 Dropoff ===== */
+  createMarker(
+    { lat: 22.297584, lng: 114.172175 },
+    "dropoff",
+    "尖沙咀 MTR"
+  );
+
+  createMarker(
+    { lat: 22.299775483011146, lng: 114.17179910962814 },
+    "dropoff",
+    "柏麗購物大道"
+  );
+
+  // ⭐⭐⭐ Task 3 核心：自動調整視野 ⭐⭐⭐
+  map.fitBounds(bounds);
 }
 
 function createMarker(position, type, name) {
@@ -98,6 +132,8 @@ function createMarker(position, type, name) {
     label: type === "pickup" ? "P" : "D",
   });
 
+  bounds.extend(position);
+  
   marker.addListener("click", () => {
     if (type === "pickup") {
       selectPickup(marker, name);
@@ -174,7 +210,7 @@ function updateRoutePlan() {
 
 <!-- Google Maps API（一定要最後） -->
 <script
-  src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBpEOmDko5uGXfIoCiQmGP-9Oi2Horo3IE&callback=initMap"
   async
   defer>
 </script>
